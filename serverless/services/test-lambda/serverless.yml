@@ -1,0 +1,23 @@
+service: test-lambda-cloudwatch-3
+
+provider:
+  name: aws
+  runtime: python3.7
+  region: ap-northeast-1
+  stage: ${opt:stage, self:custom.defaultStage}
+  role: ${env:AWS_ROLE_ARN}
+
+custom:
+  defaultStage: dev
+  schedule_active:
+    dev: false
+    prod: true
+    default: false
+
+functions:
+  test_cloudwatch:
+    handler: handler.test_cloudwatch
+    events:
+      - schedule:
+          rate: cron(*/1 * * * ? *)
+          enabled: ${self:custom.schedule_active.${opt:stage, self:custom.defaultStage}, self:custom.schedule_active.default}
