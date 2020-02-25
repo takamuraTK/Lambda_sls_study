@@ -29,6 +29,32 @@ def delete(bucket, prefix, s3client, delete_extension):
     else:
       break
     
+# prefix下にあるファイル、ディレクトリ全てまとめて削除
+def delete_all(bucket, prefix, s3client):
+  next_token = ''
+
+  while True:
+    if next_token == '':
+      response = s3client.list_objects_v2(Bucket=bucket, Prefix=prefix, StartAfter=prefix)
+    else:
+      response = s3client.list_objects_v2(Bucket=bucket, Prefix=prefix, StartAfter=prefix, ContinuationToken=next_token)
+
+    if 'Contents' in response:
+      contents = response['Contents']
+      
+      for content in contents:
+        filedir = content['Key']
+        filename = filedir.replace(prefix, '')
+        print(filename + "を削除します")
+        s3client.delete_object(Bucket=bucket, Key=filedir)
+          
+      if 'NextContinuationToken' in response:
+        next_token = response['NextContinuationToken']
+      else:
+        break
+    else:
+      break
+    
 def shopping_all_cache(event, context):
 	bucket = 's3-delete-file'
 	prefix = 'example/dir/' #削除対象のファイルがあるディレクトリ
