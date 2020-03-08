@@ -19,8 +19,8 @@ def delete(bucket, prefix, s3client, delete_extension):
         filename = filedir.replace(prefix, '')
         
         if delete_extension in filename:
-          print(filename + "を削除します")
           s3client.delete_object(Bucket=bucket, Key=filedir)
+          print(filename + "を削除しました")
           
       if 'NextContinuationToken' in response:
         next_token = response['NextContinuationToken']
@@ -45,8 +45,8 @@ def delete_all(bucket, prefix, s3client):
       for content in contents:
         filedir = content['Key']
         filename = filedir.replace(prefix, '')
-        print(filename + "を削除します")
         s3client.delete_object(Bucket=bucket, Key=filedir)
+        print(filename + "を削除しました")
           
       if 'NextContinuationToken' in response:
         next_token = response['NextContinuationToken']

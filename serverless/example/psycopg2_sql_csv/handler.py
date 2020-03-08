@@ -21,7 +21,7 @@ def hello(event, context):
   # get sql
   with psycopg2.connect(**param) as conn:
     with conn.cursor() as cur:
-      cur.execute(open('sql/test.sql', 'r').read())
+      cur.execute(open('sql/test.sql', 'rt').read())
       # sqlファイルから呼び出す場合
       
       # write tsv
@@ -30,9 +30,7 @@ def hello(event, context):
         for row in cur:
           print(row)
           writer.writerow(row)
-
-      # upload
+      # upload インデント位置注意
       bucket.upload_file(tmp_gz_dir, s3_gz_dir)
-
     conn.commit()
     
